@@ -1,0 +1,12 @@
+{
+  "builds": [
+    { "src": "api/index.js", "use": "@vercel/node" },
+    { "src": "docs/index.html", "use": "@vercel/static" },
+    { "src": "openapi.yaml", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/docs", "dest": "/docs/index.html" },
+    { "src": "/openapi.yaml", "dest": "/openapi.yaml" },
+    { "src": "/(.*)", "dest": "/api/index.js" }
+  ]
+}

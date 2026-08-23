@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>textkit 1.0.0 &mdash; API reference</title>
+<style>
+:root { color-scheme: light dark; }
+body { font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  max-width: 880px; margin: 2rem auto; padding: 0 1rem;
+  background: #fff; color: #111; }
+@media (prefers-color-scheme: dark) { body { background: #111; color: #ddd; }
+  pre, table, .card { border-color: #333 !important; } a { color: #7ab7ff !important; } }
+a { color: #0345a4; }
+h1 { font-size: 1.35rem; margin-bottom: 0.1rem; }
+h2 { font-size: 1rem; margin: 0 0 0.3rem; }
+.m { display: inline-block; min-width: 3.4em; font-weight: 700; }
+pre { border: 1px solid #ccc; padding: 0.7rem 0.9rem; overflow-x: auto; font-size: 13px; }
+pre.run { background: #f6f6f6; }
+pre.out { background: transparent; margin-top: -0.9rem; }
+.c { color: #888; }
+.sum { margin-top: 0; }
+.card { border: 1px solid #ccc; padding: 0.7rem 0.9rem; margin: 1rem 0; }
+.ok { color: #0a7d24; font-weight: 700; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 0.6rem 0; }
+th, td { border: 1px solid #ccc; padding: 0.25rem 0.5rem; text-align: left; vertical-align: top; }
+th { background: #f0f0f0; }
+section { border-top: 1px solid #ccc; padding: 1.1rem 0; }
+.out-h { font-size: 12px; color: #666; margin-bottom: 0.2rem; }
+footer { margin-top: 2rem; font-size: 12px; color: #666; border-top: 1px solid #ccc; padding-top: 0.6rem; }
+</style>
+</head>
+<body>
+<h1>textkit 1.0.0</h1>
+<p>Base URL <code>https://rapidapi-roan.vercel.app</code> &middot;
+<a href="https://rapidapi-roan.vercel.app/openapi.yaml">openapi.yaml</a> (OpenAPI 3.1.0) &middot;
+<a href="https://rapidapi-roan.vercel.app/v1/schema">GET /v1/schema</a></p>
+
+<div class="card">
+<strong>Limits</strong> (as served by GET /v1/schema at build time)<br>
+<table><tbody>
+<tr><td>auth</td><td><code>none</code></td></tr>
+<tr><td>request body max</td><td><code>65536</code> bytes &mdash; larger returns <code>400 payload_too_large</code></td></tr>
+<tr><td>content type</td><td><code>application/json</code></td></tr>
+<tr><td>rate limit</td><td>none enforced on this deployment</td></tr>
+<tr><td>every response</td><td><code>X-API-Version</code>, <code>X-Response-Time</code> (X-Response-Time on every response, milliseconds server-side)</td></tr>
+</tbody></table>
+</div>
+
+<div class="card">
+<strong>Latency</strong> &mdash; wall-clock client-side, 12 sequential calls per endpoint,
+measured 2026-08-23T22:24:41.717Z from the machine that built this page.
+Re-run any example below to measure from your own network.
+<table><thead><tr><th>endpoint</th><th>min</th><th>p50</th><th>max</th></tr></thead><tbody>
+<tr><td>GET /v1/health</td><td>116ms</td><td>125ms</td><td>128ms</td></tr>
+<tr><td>POST /v1/slug</td><td>121ms</td><td>126ms</td><td>133ms</td></tr>
+<tr><td>POST /v1/html-to-text</td><td>118ms</td><td>126ms</td><td>175ms</td></tr>
+<tr><td>POST /v1/text-stats</td><td>119ms</td><td>131ms</td><td>177ms</td></tr>
+<tr><td>POST /v1/case</td><td>117ms</td><td>125ms</td><td>138ms</td></tr>
+</tbody></table>
+</div>
+
+<section>
+<h2><span class="m">GET</span> <code>/v1/health</code></h2>
+<p class="sum">Liveness and deployed version.</p>
+
+
+<pre class="run"><span class="c"># verified this build &mdash; run it</span>
+curl -sS -X GET https://rapidapi-roan.vercel.app/v1/health</pre>
+<p class="out-h">response on this run (<span class="ok">200</span>, X-Response-Time <code>0ms</code>):</p>
+<pre class="out">{
+  &quot;status&quot;: &quot;ok&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;timestamp&quot;: &quot;2026-08-23T22:24:31.853Z&quot;,
+  &quot;processing_ms&quot;: 0
+}</pre>
+</section>
+<section>
+<h2><span class="m">GET</span> <code>/v1/schema</code></h2>
+<p class="sum">Self-describing schema document for this deployment.</p>
+
+
+<pre class="run"><span class="c"># verified this build &mdash; run it</span>
+curl -sS -X GET https://rapidapi-roan.vercel.app/v1/schema</pre>
+<p class="out-h">response on this run (<span class="ok">200</span>, X-Response-Time <code>0ms</code>):</p>
+<pre class="out">{
+  &quot;name&quot;: &quot;textkit&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;description&quot;: &quot;Deterministic text utilities. No auth on this deployment.&quot;,
+  &quot;limits&quot;: {
+    &quot;request_body_max_bytes&quot;: 65536,
+    &quot;request_content_type&quot;: &quot;application/json&quot;,
+    &quot;auth&quot;: &quot;none&quot;,
+    &quot;rate_limit&quot;: &quot;none enforced on this deployment&quot;,
+    &quot;latency_header&quot;: &quot;X-Response-Time on every response, milliseconds server-side&quot;
+  },
+  &quot;endpoints&quot;: [
+    {
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;path&quot;: &quot;/v1/health&quot;,
+      &quot;response_example&quot;: {
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;version&quot;: &quot;1.0.0&quot;
+      }
+    },
+    {
+      &quot;method&quot;: &quot;POST&quot;,
+      &quot;path&quot;: &quot;/v1/slug&quot;,
+      &quot;request&quot;: {
+        &quot;text&quot;: &quot;string (required)&quot;,
+        &quot;separator&quot;: &quot;string (optional, default \&quot;-\&quot;)&quot;,
+        &quot;lowercase&quot;: &quot;boolean (optional, default true)&quot;
+      },
+      &quot;response&quot;: {
+        &quot;slug&quot;: &quot;string&quot;
+      },
+      &quot;example_request&quot;: {
+        &quot;text&quot;: &quot;Héllo, World! This is TextKit&quot;,
+        &quot;separator&quot;: &quot;_&quot;
+      },
+      &quot;example_response&quot;: {
+        &quot;slug&quot;: &quot;hello_world_this_is_textkit&quot;
+      }
+    },
+    {
+      &quot;method&quot;: &quot;POST&quot;,
+      &quot;path&quot;: &quot;/v1/html-to-text&quot;,
+      &quot;request&quot;: {
+        &quot;html&quot;: &quot;string (required, max 64KB body)&quot;
+      },
+      &quot;response&quot;: {
+        &quot;text&quot;: &quot;string&quot;
+      },
+      &quot;example_request&quot;: {
+        &quot;html&quot;: &quot;&lt;h1&gt;Title&lt;/h1&gt;&lt;p&gt;Hello &amp;amp; welcome.&lt;/p&gt;&quot;
+      },
+      &quot;example_response&quot;: {
+        &quot;text&quot;: &quot;Title\nHello &amp; welcome.&quot;
+      }
+    },
+    {
+      &quot;method&quot;: &quot;POST&quot;,
+      &quot;path&quot;: &quot;/v1/text-stats&quot;,
+      &quot;request&quot;: {
+        &quot;text&quot;: &quot;string (required)&quot;
+      },
+      &quot;response&quot;: {
+        &quot;characters&quot;: &quot;int&quot;,
+        &quot;words&quot;: &quot;int&quot;,
+        &quot;sentences&quot;: &quot;int&quot;,
+        &quot;paragraphs&quot;: &quot;int&quot;,
+        &quot;reading_time_seconds&quot;: &quot;int (at 200 wpm)&quot;
+      },
+      &quot;example_request&quot;: {
+        &quot;text&quot;: &quot;One two three.&quot;
+      },
+      &quot;example_response&quot;: {
+        &quot;characters&quot;: 14,
+        &quot;words&quot;: 3,
+        &quot;sentences&quot;: 1,
+        &quot;paragraphs&quot;: 1,
+        &quot;reading_time_seconds&quot;: 1
+      }
+    },
+    {
+      &quot;method&quot;: &quot;POST&quot;,
+      &quot;path&quot;: &quot;/v1/case&quot;,
+      &quot;request&quot;: {
+        &quot;text&quot;: &quot;string (required)&quot;,
+        &quot;to&quot;: &quot;one of upper | lower | title | camel | pascal | snake | kebab&quot;
+      },
+      &quot;response&quot;: {
+        &quot;result&quot;: &quot;string&quot;
+      },
+      &quot;example_request&quot;: {
+        &quot;text&quot;: &quot;Hello World Example&quot;,
+        &quot;to&quot;: &quot;snake&quot;
+      },
+      &quot;example_response&quot;: {
+        &quot;result&quot;: &quot;hello_world_example&quot;
+      }
+    }
+  ]
+}</pre>
+</section>
+<section>
+<h2><span class="m">POST</span> <code>/v1/slug</code></h2>
+<p class="sum">URL-safe slug from arbitrary text.</p>
+<p>NFKD-normalizes, strips diacritics and quotes, replaces non-alphanumerics with the
+separator, collapses repeats, optionally lowercases.</p>
+<table><thead><tr><th>field</th><th>type</th><th></th><th></th></tr></thead><tbody><tr><td><code>text</code></td><td>string</td><td>required</td><td></td></tr><tr><td><code>separator</code></td><td>string</td><td>optional, default `"-"`</td><td>Non-empty replacement for non-alphanumeric runs.</td></tr><tr><td><code>lowercase</code></td><td>boolean</td><td>optional, default `true`</td><td>Set false to preserve letter case.</td></tr></tbody></table>
+<pre class="run"><span class="c"># verified this build &mdash; run it</span>
+curl -sS -X POST https://rapidapi-roan.vercel.app/v1/slug \
+  -H 'Content-Type: application/json' \
+  -d '{&quot;text&quot;:&quot;Hello World Example&quot;}'</pre>
+<p class="out-h">response on this run (<span class="ok">200</span>, X-Response-Time <code>0ms</code>):</p>
+<pre class="out">{
+  &quot;slug&quot;: &quot;hello-world-example&quot;
+}</pre>
+</section>
+<section>
+<h2><span class="m">POST</span> <code>/v1/html-to-text</code></h2>
+<p class="sum">Strip HTML to plain text.</p>
+<p>Removes script, style and comment blocks; block-level closing tags become newlines;
+decodes common named and numeric entities; collapses whitespace runs; trims.</p>
+<table><thead><tr><th>field</th><th>type</th><th></th><th></th></tr></thead><tbody><tr><td><code>html</code></td><td>string</td><td>required</td><td></td></tr></tbody></table>
+<pre class="run"><span class="c"># verified this build &mdash; run it</span>
+curl -sS -X POST https://rapidapi-roan.vercel.app/v1/html-to-text \
+  -H 'Content-Type: application/json' \
+  -d '{&quot;html&quot;:&quot;&lt;h1&gt;Title&lt;/h1&gt;&lt;p&gt;Hello &amp;amp; welcome.&lt;/p&gt;&quot;}'</pre>
+<p class="out-h">response on this run (<span class="ok">200</span>, X-Response-Time <code>0ms</code>):</p>
+<pre class="out">{
+  &quot;text&quot;: &quot;Title\nHello &amp; welcome.&quot;
+}</pre>
+</section>
+<section>
+<h2><span class="m">POST</span> <code>/v1/text-stats</code></h2>
+<p class="sum">Counts and reading time.</p>
+<p>Reading time assumes 200 words per minute, rounded up to whole seconds.</p>
+<table><thead><tr><th>field</th><th>type</th><th></th><th></th></tr></thead><tbody><tr><td><code>text</code></td><td>string</td><td>required</td><td></td></tr></tbody></table>
+<pre class="run"><span class="c"># verified this build &mdash; run it</span>
+curl -sS -X POST https://rapidapi-roan.vercel.app/v1/text-stats \
+  -H 'Content-Type: application/json' \
+  -d '{&quot;text&quot;:&quot;The quick brown fox jumps over the lazy dog.&quot;}'</pre>
+<p class="out-h">response on this run (<span class="ok">200</span>, X-Response-Time <code>0ms</code>):</p>
+<pre class="out">{
+  &quot;characters&quot;: 44,
+  &quot;words&quot;: 9,
+  &quot;sentences&quot;: 1,
+  &quot;paragraphs&quot;: 1,
+  &quot;reading_time_seconds&quot;: 3
+}</pre>
+</section>
+<section>
+<h2><span class="m">POST</span> <code>/v1/case</code></h2>
+<p class="sum">Convert text between cases.</p>
+<p>`upper`, `lower`, `title` operate on the input string directly.
+`camel`, `pascal`, `snake`, `kebab` first split on non-alphanumerics and camelCase
+boundaries, then rejoin.</p>
+<table><thead><tr><th>field</th><th>type</th><th></th><th></th></tr></thead><tbody><tr><td><code>text</code></td><td>string</td><td>required</td><td></td></tr><tr><td><code>to</code></td><td>string, one of `upper` | `lower` | `title` | `camel` | `pascal` | `snake` | `kebab`</td><td>required</td><td></td></tr></tbody></table>
+<pre class="run"><span class="c"># verified this build &mdash; run it</span>
+curl -sS -X POST https://rapidapi-roan.vercel.app/v1/case \
+  -H 'Content-Type: application/json' \
+  -d '{&quot;text&quot;:&quot;Hello World Example&quot;,&quot;to&quot;:&quot;camel&quot;}'</pre>
+<p class="out-h">response on this run (<span class="ok">200</span>, X-Response-Time <code>0ms</code>):</p>
+<pre class="out">{
+  &quot;result&quot;: &quot;helloWorldExample&quot;
+}</pre>
+</section>
+
+<section>
+<h2>Errors</h2>
+<pre class="out">{
+  &quot;400 missing field&quot;: {
+    &quot;error&quot;: &quot;missing_or_invalid_field:to&quot;
+  },
+  &quot;400 invalid JSON&quot;: {
+    &quot;error&quot;: &quot;invalid_json&quot;
+  },
+  &quot;400 body over limit&quot;: {
+    &quot;error&quot;: &quot;payload_too_large&quot;
+  },
+  &quot;405 wrong method&quot;: {
+    &quot;error&quot;: &quot;method_not_allowed&quot;,
+    &quot;allow&quot;: &quot;POST&quot;
+  },
+  &quot;404 unknown path&quot;: {
+    &quot;error&quot;: &quot;not_found&quot;,
+    &quot;hint&quot;: &quot;GET /v1/schema lists every endpoint&quot;
+  }
+}</pre>
+</section>
+
+<footer>
+Every example on this page was executed against <code>https://rapidapi-roan.vercel.app</code> during this build
+(17 requests, all returned the status shown). Build gate:
+<code>node tools/build-docs.mjs</code> aborts if any documented example stops returning 200.
+</footer>
+</body>
+</html>

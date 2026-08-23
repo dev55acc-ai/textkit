@@ -1,0 +1,325 @@
+# textkit — OpenAPI 3.1 description, generated from the LIVE deployment.
+# Every example below was returned by https://rapidapi-roan.vercel.app on 2026-08-23.
+# Verified at source this cycle:
+#   GET  /v1/health        -> 200 {"status":"ok","version":"1.0.0",...}
+#   POST /v1/slug          -> 200 {"slug":"hello_world_this_is_textkit"}   (separator="_")
+#   POST /v1/slug          -> 200 {"slug":"Hello+World"}                   (lowercase=false, separator="+")
+#   POST /v1/html-to-text  -> 200 {"text":"Title\nHello & welcome."}
+#   POST /v1/text-stats    -> 200 {"characters":44,"words":9,"sentences":1,"paragraphs":1,"reading_time_seconds":3}
+#   POST /v1/case          -> 200 for to = upper|lower|title|camel|pascal|snake|kebab
+#   missing field          -> 400 {"error":"missing_or_invalid_field:text"}
+#   wrong method           -> 405 {"error":"method_not_allowed","allow":"POST"}
+openapi: 3.1.0
+info:
+  title: textkit
+  version: 1.0.0
+  summary: Deterministic text utilities.
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Proprietary
+  description: |
+    Five endpoints: slugify, HTML-to-text, text statistics, case conversion, health.
+    No auth on this deployment. Request bodies are JSON, max 64 KB.
+    Every response carries `X-API-Version` and server-side `X-Response-Time` (milliseconds).
+    Rate limit: none enforced on this deployment.
+servers:
+  - url: https://rapidapi-roan.vercel.app
+security: []
+tags:
+  - name: text
+    description: Text transformation endpoints.
+  - name: service
+    description: Deployment metadata and liveness.
+paths:
+  /v1/health:
+    get:
+      operationId: getHealth
+      tags: [service]
+      summary: Liveness and deployed version.
+      responses:
+        '200':
+          description: Service is up.
+          headers:
+            X-API-Version: { $ref: '#/components/headers/X-API-Version' }
+            X-Response-Time: { $ref: '#/components/headers/X-Response-Time' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+              examples:
+                default:
+                  value:
+                    status: ok
+                    version: 1.0.0
+                    timestamp: '2026-08-23T15:09:33.524Z'
+                    processing_ms: 0
+        '405': { $ref: '#/components/responses/MethodNotAllowed' }
+
+  /v1/schema:
+    get:
+      operationId: getServiceSchema
+      tags: [service]
+      summary: Self-describing schema document for this deployment.
+      responses:
+        '200':
+          description: The limits and endpoint list this deployment advertises.
+          headers:
+            X-API-Version: { $ref: '#/components/headers/X-API-Version' }
+            X-Response-Time: { $ref: '#/components/headers/X-Response-Time' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ServiceSchema' }
+        '405': { $ref: '#/components/responses/MethodNotAllowed' }
+
+  /v1/slug:
+    post:
+      operationId: slugifyText
+      tags: [text]
+      summary: URL-safe slug from arbitrary text.
+      description: |
+        NFKD-normalizes, strips diacritics and quotes, replaces non-alphanumerics with the
+        separator, collapses repeats, optionally lowercases.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SlugRequest' }
+            examples:
+              defaultSeparator:
+                value: { text: 'Hello World Example' }
+                summary: 'Live 200 response: { slug: hello-world-example }'
+              customSeparator:
+                value: { text: 'Héllo, World! This is TextKit', separator: '_' }
+                summary: 'Live 200 response: { slug: hello_world_this_is_textkit }'
+              keepCase:
+                value: { text: 'Hello World', lowercase: false, separator: '+' }
+                summary: 'Live 200 response: { slug: Hello+World }'
+      responses:
+        '200':
+          description: Slug produced.
+          headers:
+            X-API-Version: { $ref: '#/components/headers/X-API-Version' }
+            X-Response-Time: { $ref: '#/components/headers/X-Response-Time' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Slug' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '405': { $ref: '#/components/responses/MethodNotAllowed' }
+
+  /v1/html-to-text:
+    post:
+      operationId: htmlToText
+      tags: [text]
+      summary: Strip HTML to plain text.
+      description: |
+        Removes script, style and comment blocks; block-level closing tags become newlines;
+        decodes common named and numeric entities; collapses whitespace runs; trims.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HtmlToTextRequest' }
+            examples:
+              default:
+                value: { html: '<h1>Title</h1><p>Hello &amp; welcome.</p>' }
+                summary: 'Live 200 response: { text: "Title\nHello & welcome." }'
+      responses:
+        '200':
+          description: Plain text produced.
+          headers:
+            X-API-Version: { $ref: '#/components/headers/X-API-Version' }
+            X-Response-Time: { $ref: '#/components/headers/X-Response-Time' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PlainText' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '405': { $ref: '#/components/responses/MethodNotAllowed' }
+
+  /v1/text-stats:
+    post:
+      operationId: textStats
+      tags: [text]
+      summary: Counts and reading time.
+      description: Reading time assumes 200 words per minute, rounded up to whole seconds.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TextRequest' }
+            examples:
+              default:
+                value: { text: 'The quick brown fox jumps over the lazy dog.' }
+                summary: 'Live 200 response: {"characters":44,"words":9,"sentences":1,"paragraphs":1,"reading_time_seconds":3}'
+      responses:
+        '200':
+          description: Statistics computed.
+          headers:
+            X-API-Version: { $ref: '#/components/headers/X-API-Version' }
+            X-Response-Time: { $ref: '#/components/headers/X-Response-Time' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TextStats' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '405': { $ref: '#/components/responses/MethodNotAllowed' }
+
+  /v1/case:
+    post:
+      operationId: changeCase
+      tags: [text]
+      summary: Convert text between cases.
+      description: |
+        `upper`, `lower`, `title` operate on the input string directly.
+        `camel`, `pascal`, `snake`, `kebab` first split on non-alphanumerics and camelCase
+        boundaries, then rejoin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CaseRequest' }
+            examples:
+              camel:
+                value: { text: 'Hello World Example', to: camel }
+                summary: 'Live 200 response: { result: helloWorldExample }'
+              snake:
+                value: { text: 'Hello World Example', to: snake }
+                summary: 'Live 200 response: { result: hello_world_example }'
+              upper:
+                value: { text: 'Hello World Example', to: upper }
+                summary: 'Live 200 response: { result: HELLO WORLD EXAMPLE }'
+              lower:
+                value: { text: 'Hello World Example', to: lower }
+                summary: 'Live 200 response: { result: hello world example }'
+              title:
+                value: { text: 'Hello World Example', to: title }
+                summary: 'Live 200 response: { result: Hello World Example }'
+              pascal:
+                value: { text: 'Hello World Example', to: pascal }
+                summary: 'Live 200 response: { result: HelloWorldExample }'
+              kebab:
+                value: { text: 'Hello World Example', to: kebab }
+                summary: 'Live 200 response: { result: hello-world-example }'
+      responses:
+        '200':
+          description: Converted string.
+          headers:
+            X-API-Version: { $ref: '#/components/headers/X-API-Version' }
+            X-Response-Time: { $ref: '#/components/headers/X-Response-Time' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CaseResult' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '405': { $ref: '#/components/responses/MethodNotAllowed' }
+
+components:
+  headers:
+    X-API-Version:
+      description: Deployed API version.
+      schema: { type: string, examples: ['1.0.0'] }
+    X-Response-Time:
+      description: Server-side processing time in milliseconds.
+      schema: { type: string, pattern: '^\d+ms$', examples: ['0ms'] }
+  schemas:
+    Health:
+      type: object
+      required: [status, version, timestamp, processing_ms]
+      properties:
+        status: { type: string, const: ok }
+        version: { type: string, examples: ['1.0.0'] }
+        timestamp: { type: string, format: date-time }
+        processing_ms: { type: integer, minimum: 0 }
+    ServiceSchema:
+      type: object
+      additionalProperties: true
+      description: Full self-description served by GET /v1/schema.
+    TextRequest:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string }
+      additionalProperties: false
+    SlugRequest:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string }
+        separator:
+          type: string
+          default: '-'
+          description: Non-empty replacement for non-alphanumeric runs.
+        lowercase:
+          type: boolean
+          default: true
+          description: Set false to preserve letter case.
+      additionalProperties: false
+    HtmlToTextRequest:
+      type: object
+      required: [html]
+      properties:
+        html: { type: string }
+      additionalProperties: false
+    CaseRequest:
+      type: object
+      required: [text, to]
+      properties:
+        text: { type: string }
+        to:
+          type: string
+          enum: [upper, lower, title, camel, pascal, snake, kebab]
+      additionalProperties: false
+    Slug:
+      type: object
+      required: [slug]
+      properties:
+        slug: { type: string }
+    PlainText:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string }
+    TextStats:
+      type: object
+      required: [characters, words, sentences, paragraphs, reading_time_seconds]
+      properties:
+        characters: { type: integer, minimum: 0 }
+        words: { type: integer, minimum: 0 }
+        sentences: { type: integer, minimum: 0 }
+        paragraphs: { type: integer, minimum: 0 }
+        reading_time_seconds: { type: integer, minimum: 0 }
+    CaseResult:
+      type: object
+      required: [result]
+      properties:
+        result: { type: string }
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          examples:
+            - missing_or_invalid_field:text
+            - invalid_json
+            - payload_too_large
+            - method_not_allowed
+            - not_found
+        allow: { type: string, examples: ['POST', 'GET'] }
+        hint: { type: string }
+        endpoint: { type: string }
+  responses:
+    BadRequest:
+      description: Missing or invalid field, invalid JSON, or body over 64 KB.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          examples:
+            missingField:
+              value: { error: 'missing_or_invalid_field:text' }
+            invalidTarget:
+              value: { error: 'missing_or_invalid_field:to' }
+    MethodNotAllowed:
+      description: Method not supported on this path.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          examples:
+            default:
+              value: { error: method_not_allowed, allow: POST }
