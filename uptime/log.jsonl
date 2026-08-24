@@ -17,3 +17,4 @@
 {"ts":"2026-08-24T17:47:46.150Z","checks":[{"name":"health","http_status":200,"pass":true,"latency_ms":402},{"name":"slug","http_status":200,"pass":true,"latency_ms":214}],"ok":true}
 {"ts":"2026-08-24T19:00:29.101Z","checks":[{"name":"health","http_status":200,"pass":true,"latency_ms":269},{"name":"slug","http_status":200,"pass":true,"latency_ms":177}],"ok":true}
 {"ts":"2026-08-24T19:45:36.904Z","checks":[{"name":"health","http_status":200,"pass":true,"latency_ms":263},{"name":"slug","http_status":200,"pass":true,"latency_ms":70}],"ok":true}
+{"ts":"2026-08-24T20:49:20.226Z","checks":[{"name":"health","http_status":0,"pass":false,"error":"SyntaxError: Unexpected token 'T', \"The deploy\"... is not valid JSON"},{"name":"slug","http_status":0,"pass":false,"error":"SyntaxError: Unexpected token 'T', \"The deploy\"... is not valid JSON"}],"ok":false}
